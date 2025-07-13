@@ -71,7 +71,6 @@
     <div class="term-item"><input type="checkbox" id="nic"> <span class="term-label" onclick="showDetails('nic')">Сетевая карта (NIC)</span></div>
     <div class="term-item"><input type="checkbox" id="mac"> <span class="term-label" onclick="showDetails('mac')">MAC-адрес</span></div>
     <div class="term-item"><input type="checkbox" id="switch"> <span class="term-label" onclick="showDetails('switch')">Коммутатор</span></div>
-    <div class="term-item"><input type="checkbox" id="vlan"> <span class="term-label" onclick="showDetails('vlan')">VLAN</span></div>
   </div>
 
   <div class="details" id="details">
@@ -114,11 +113,6 @@
         title: "Коммутатор (Switch)",
         description: "Сетевое устройство, работающее на канальном уровне. В отличие от хаба, он читает MAC-адрес и пересылает кадр только нужному получателю. Это как почтальон, который знает, в какой ящик класть письмо.",
         image: "images/switch.jpeg"
-      },
-      vlan: {
-        title: "VLAN (Virtual LAN)",
-        description: "Технология, которая позволяет логически разделить одну физическую сеть на несколько виртуальных. Например, бухгалтерия и отдел продаж могут не видеть друг друга, хотя подключены к одной сети.",
-        image: "images/vlan.jpg"
       }
     };
 
