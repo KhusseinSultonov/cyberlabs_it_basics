@@ -10,7 +10,7 @@
     margin: 0;
     display: flex;
     height: 100vh;
-    background-color: #0d1117; /* более глубокий, как у GitHub */
+    background-color: #0d1117;
     color: #c9d1d9;
   }
 
@@ -51,7 +51,7 @@
 
   .term-item input[type="checkbox"] {
     margin-right: 12px;
-    accent-color: #58a6ff; /* цвет галочки */
+    accent-color: #58a6ff;
     transform: scale(1.3);
   }
 
@@ -86,7 +86,6 @@
     border: 1px solid #30363d;
   }
 </style>
-
 </head>
 <body>
   <div class="sidebar">
@@ -152,6 +151,24 @@
         <img src="${data.image}" alt="${data.title}" class="term-image">
       `;
     }
+
+    // Сохранение состояния чекбоксов
+    document.addEventListener('DOMContentLoaded', function() {
+      const checkboxes = document.querySelectorAll('.term-item input[type="checkbox"]');
+      
+      // Восстановление состояния из localStorage
+      checkboxes.forEach(checkbox => {
+        const savedState = localStorage.getItem(checkbox.id);
+        if (savedState === 'true') {
+          checkbox.checked = true;
+        }
+        
+        // Сохранение состояния при изменении
+        checkbox.addEventListener('change', function() {
+          localStorage.setItem(checkbox.id, checkbox.checked);
+        });
+      });
+    });
   </script>
 </body>
 </html>
