@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Список сетевых терминов</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      display: flex;
+      height: 100vh;
+      background-color: #1e1e1e;
+      color: #f0f0f0;
+    }
+    .sidebar {
+      width: 60%;
+      padding: 40px;
+      background: #2c2c2c;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+      overflow-y: auto;
+    }
+    .details {
+      flex: 1;
+      padding: 40px;
+      background: #1e1e1e;
+      border-left: 1px solid #444;
+      overflow-y: auto;
+    }
+    .term-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      cursor: pointer;
+    }
+    .term-item input[type="checkbox"] {
+      margin-right: 10px;
+      transform: scale(1.3);
+    }
+    .term-label {
+      font-size: 1.2em;
+    }
+    .term-label:hover {
+      text-decoration: underline;
+      color: #61dafb;
+    }
+    .term-title {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+      color: #61dafb;
+    }
+    .term-description {
+      font-size: 1em;
+      margin-bottom: 20px;
+    }
+    .term-image {
+      max-width: 100%;
+      margin-top: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>Термины для изучения</h2>
+    <div class="term-item"><input type="checkbox" id="utp"> <span class="term-label" onclick="showDetails('utp')">UTP</span></div>
+    <div class="term-item"><input type="checkbox" id="bit"> <span class="term-label" onclick="showDetails('bit')">Бит</span></div>
+    <div class="term-item"><input type="checkbox" id="ethernet"> <span class="term-label" onclick="showDetails('ethernet')">Ethernet</span></div>
+    <div class="term-item"><input type="checkbox" id="hub"> <span class="term-label" onclick="showDetails('hub')">Хаб (Hub)</span></div>
+    <div class="term-item"><input type="checkbox" id="nic"> <span class="term-label" onclick="showDetails('nic')">Сетевая карта (NIC)</span></div>
+    <div class="term-item"><input type="checkbox" id="mac"> <span class="term-label" onclick="showDetails('mac')">MAC-адрес</span></div>
+    <div class="term-item"><input type="checkbox" id="switch"> <span class="term-label" onclick="showDetails('switch')">Коммутатор</span></div>
+    <div class="term-item"><input type="checkbox" id="vlan"> <span class="term-label" onclick="showDetails('vlan')">VLAN</span></div>
+  </div>
+
+  <div class="details" id="details">
+    <p>Нажмите на термин, чтобы узнать о нём подробнее.</p>
+  </div>
+
+  <script>
+    const termData = {
+      utp: {
+        title: "UTP (Unshielded Twisted Pair)",
+        description: "Тип сетевого кабеля, состоящий из пар витых медных проводов без экранирования. Используется почти везде: от домашнего роутера до серверной. Пример: вы подключаете ноутбук к интернету через синий кабель — почти наверняка это UTP.",
+        image: "images/utp.jpeg"
+      },
+      bit: {
+        title: "Бит",
+        description: "Минимальная единица цифровой информации. Один бит может быть 0 или 1. Представьте, что вы моргаете фонариком — одно мигание = 1, отсутствие = 0. Вся информация передаётся в таких последовательностях.",
+        image: "images/bit.jpg"
+      },
+      ethernet: {
+        title: "Ethernet",
+        description: "Семейство технологий, которое определяет, как устройства передают кадры по сети. Если сравнивать с почтой — Ethernet это как доставка писем: есть конверт, есть получатель, и всё идёт по определённым правилам.",
+        image: "images/ethernet.jpg"
+      },
+      hub: {
+        title: "Хаб (Hub)",
+        description: "Простейшее сетевое устройство. Как громкоговоритель: всё, что в него входит, он рассылает всем без разбора. Сегодня почти не используется, уступив место коммутаторам.",
+        image: "images/hub.jpg"
+      },
+      nic: {
+        title: "Сетевая карта (NIC)",
+        description: "Сетевой интерфейс. Это как ухо и рот компьютера, чтобы 'слышать' и 'говорить' с другими по сети. Обычно встроена в материнскую плату, но может быть и отдельным модулем.",
+        image: "images/nic.jpg"
+      },
+      mac: {
+        title: "MAC-адрес",
+        description: "Уникальный идентификатор вашей сетевой карты. Как номер паспорта для сетевого устройства. По нему коммутатор определяет, кому именно передавать кадр.",
+        image: "images/mac.jpg"
+      },
+      switch: {
+        title: "Коммутатор (Switch)",
+        description: "Сетевое устройство, работающее на канальном уровне. В отличие от хаба, он читает MAC-адрес и пересылает кадр только нужному получателю. Это как почтальон, который знает, в какой ящик класть письмо.",
+        image: "images/switch.jpg"
+      },
+      vlan: {
+        title: "VLAN (Virtual LAN)",
+        description: "Технология, которая позволяет логически разделить одну физическую сеть на несколько виртуальных. Например, бухгалтерия и отдел продаж могут не видеть друг друга, хотя подключены к одной сети.",
+        image: "images/vlan.jpg"
+      }
+    };
+
+    function showDetails(term) {
+      const container = document.getElementById('details');
+      const data = termData[term];
+      container.innerHTML = `
+        <div class="term-title">${data.title}</div>
+        <div class="term-description">${data.description}</div>
+        <img src="${data.image}" alt="${data.title}" class="term-image">
+      `;
+    }
+  </script>
+</body>
+</html>
