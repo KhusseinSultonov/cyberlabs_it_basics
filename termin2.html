@@ -10,47 +10,80 @@
       margin: 0;
       display: flex;
       height: 100vh;
-      background-color: #1e1e1e;
-      color: #f0f0f0;
+      background-color: #0d1117;
+      color: #c9d1d9;
     }
+
     .sidebar {
       width: 60%;
       padding: 40px;
-      background: #2c2c2c;
-      box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+      background: #161b22;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
       overflow-y: auto;
+      border-right: 1px solid #30363d;
     }
+
     .details {
       flex: 1;
       padding: 40px;
-      background: #1e1e1e;
-      border-left: 1px solid #444;
+      background: #0d1117;
       overflow-y: auto;
     }
+
+    h2 {
+      color: #f0f6fc;
+      margin-bottom: 20px;
+    }
+
     .term-item {
       display: flex;
       align-items: center;
-      margin-bottom: 15px;
+      margin-bottom: 18px;
       cursor: pointer;
+      padding: 10px 0;
+      border-bottom: 1px dashed #30363d;
+      transition: background 0.2s;
     }
+
+    .term-item:hover {
+      background-color: #21262d;
+    }
+
     .term-item input[type="checkbox"] {
-      margin-right: 10px;
+      margin-right: 12px;
+      accent-color: #58a6ff;
       transform: scale(1.3);
     }
+
     .term-label {
-      font-size: 1.2em;
+      font-size: 1.1em;
+      font-weight: 500;
+      color: #c9d1d9;
+      transition: color 0.2s ease;
     }
+
     .term-label:hover {
+      color: #58a6ff;
       text-decoration: underline;
-      color: #61dafb;
     }
+
     .term-title {
-      font-size: 1.5em;
-      margin-bottom: 10px;
-      color: #61dafb;
+      font-size: 1.6em;
+      margin-bottom: 15px;
+      color: #58a6ff;
     }
+
     .term-description {
-      font-size: 1em;
+      font-size: 1.05em;
+      margin-bottom: 25px;
+      line-height: 1.6;
+    }
+
+    .term-image {
+      max-width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
+      border: 1px solid #30363d;
       margin-bottom: 20px;
     }
   </style>
@@ -76,35 +109,43 @@
     const termData = {
       ip: {
         title: "IP-адрес",
-        description: "Уникальный адрес устройства в сети, который используется для маршрутизации пакетов. Пример: 192.168.1.10 — адрес компьютера в локальной сети."
+        description: "Уникальный адрес устройства в сети, который используется для маршрутизации пакетов. Пример: 192.168.1.10 — адрес компьютера в локальной сети.",
+        image: "images/ip.png"
       },
       ipv4: {
         title: "IPv4",
-        description: "Протокол адресации в сети, использующий 32-битные адреса. Пример: 192.168.0.1. Самый распространённый на сегодня формат IP."
+        description: "Протокол адресации в сети, использующий 32-битные адреса. Пример: 192.168.0.1. Самый распространённый на сегодня формат IP.",
+        image: "images/ipv4.png"
       },
       ipv6: {
         title: "IPv6",
-        description: "Новая версия IP, использующая 128-битные адреса. Решает проблему нехватки адресов в IPv4. Пример: 2001:0db8:85a3::8a2e:0370:7334."
+        description: "Новая версия IP, использующая 128-битные адреса. Решает проблему нехватки адресов в IPv4. Пример: 2001:0db8:85a3::8a2e:0370:7334.",
+        image: "images/ipv6.png"
       },
       router: {
         title: "Маршрутизатор",
-        description: "Устройство, определяющее путь для пакетов между сетями. Например, ваш домашний роутер передаёт пакеты от ноутбука в интернет и обратно."
+        description: "Устройство, определяющее путь для пакетов между сетями. Например, ваш домашний роутер передаёт пакеты от ноутбука в интернет и обратно.",
+        image: "images/router.jpg"
       },
       packet: {
         title: "Пакет",
-        description: "Формат данных на сетевом уровне. Содержит IP-адрес отправителя, получателя и полезную нагрузку. Как конверт с письмом и адресами."
+        description: "Формат данных на сетевом уровне. Содержит IP-адрес отправителя, получателя и полезную нагрузку. Как конверт с письмом и адресами.",
+        image: "images/packet.png"
       },
       ttl: {
         title: "TTL (Time To Live)",
-        description: "Поле в IP-пакете, которое ограничивает число переходов (hop), чтобы пакет не ходил по сети бесконечно. Уменьшается при каждом переходе."
+        description: "Поле в IP-пакете, которое ограничивает число переходов (hop), чтобы пакет не ходил по сети бесконечно. Уменьшается при каждом переходе.",
+        image: "images/ttl.png"
       },
       traceroute: {
         title: "Traceroute",
-        description: "Утилита, показывающая путь пакета до назначения. Помогает найти, где на пути возникли задержки или потери."
+        description: "Утилита, показывающая путь пакета до назначения. Помогает найти, где на пути возникли задержки или потери.",
+        image: "images/traceroute.png"
       },
       ping: {
         title: "Ping",
-        description: "Инструмент для проверки доступности хоста по IP. Отправляет ICMP-запрос и измеряет задержку в мс. Если пинг прошёл — адрес доступен."
+        description: "Инструмент для проверки доступности хоста по IP. Отправляет ICMP-запрос и измеряет задержку в мс. Если пинг прошёл — адрес доступен.",
+        image: "images/ping.png"
       }
     };
 
@@ -114,8 +155,25 @@
       container.innerHTML = `
         <div class="term-title">${data.title}</div>
         <div class="term-description">${data.description}</div>
+        <img src="${data.image}" alt="${data.title}" class="term-image">
       `;
     }
+
+    // Сохраняем состояние чекбоксов
+    document.addEventListener('DOMContentLoaded', function () {
+      const checkboxes = document.querySelectorAll('.term-item input[type="checkbox"]');
+
+      checkboxes.forEach(checkbox => {
+        const savedState = localStorage.getItem(checkbox.id);
+        if (savedState === 'true') {
+          checkbox.checked = true;
+        }
+
+        checkbox.addEventListener('change', function () {
+          localStorage.setItem(checkbox.id, checkbox.checked);
+        });
+      });
+    });
   </script>
 </body>
 </html>
