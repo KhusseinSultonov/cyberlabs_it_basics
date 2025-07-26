@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCP vs UDP - Интерактивная визуализация</title>
+    <!-- Подключаем GSAP для плавной анимации -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <!-- Подключаем Font Awesome для иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #0f0f12;
+            --bg-panel: #1a1a23;
+            --accent-purple: #7b4dff;
+            --accent-blue: #2196f3;
+            --accent-green: #00c853;
+            --accent-red: #ff5252;
+            --text-primary: #f0f0f0;
+            --text-secondary: #b0b0b0;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-blue));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .protocols-container {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .protocol {
+            flex: 1;
+            min-width: 300px;
+            background: var(--bg-panel);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .protocol:hover {
+            transform: translateY(-5px);
+        }
+        
+        .protocol::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+        }
+        
+        .protocol.tcp::before {
+            background: var(--accent-green);
+        }
+        
+        .protocol.udp::before {
+            background: var(--accent-blue);
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .visualization {
+            height: 250px;
+            position: relative;
+            margin: 25px 0;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .endpoint {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 2;
+        }
+        
+        .client {
+            left: 20px;
+            color: var(--accent-purple);
+        }
+        
+        .server {
+            right: 20px;
+            color: var(--accent-blue);
+        }
+        
+        .connection-line {
+            position: absolute;
+            top: 50%;
+            left: 80px;
+            right: 80px;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                          rgba(123, 77, 255, 0.3), 
+                          rgba(33, 150, 243, 0.3));
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+        
+        .packet {
+            position: absolute;
+            width: 36px;
+            height: 24px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            z-index: 3;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .tcp {
+            background-color: var(--accent-green);
+            color: #000;
+        }
+        
+        .udp {
+            background-color: var(--accent-blue);
+            color: #000;
+        }
+        
+        .lost {
+            background-color: var(--accent-red);
+            color: #000;
+        }
+        
+        .ack {
+            background-color: #ffeb3b;
+            color: #000;
+        }
+        
+        .features {
+            margin-top: 20px;
+        }
+        
+        .features li {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        button {
+            background: linear-gradient(135deg, var(--accent-purple), #9c27b0);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(123, 77, 255, 0.3);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(123, 77, 255, 0.4);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            transform: none !important;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        @media (max-width: 768px) {
+            .protocols-container {
+                flex-direction: column;
+            }
+            
+            .protocol {
+                min-width: 100%;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-network-wired"></i> TCP vs UDP</h1>
+            <p>Интерактивная визуализация сетевых протоколов</p>
+        </header>
+        
+        <div class="protocols-container">
+            <div class="protocol tcp">
+                <h2><i class="fas fa-shield-alt"></i> TCP</h2>
+                <div class="visualization" id="tcp-viz">
+                    <div class="endpoint client"><i class="fas fa-laptop"></i> Клиент</div>
+                    <div class="endpoint server"><i class="fas fa-server"></i> Сервер</div>
+                    <div class="connection-line"></div>
+                </div>
+                <ul class="features">
+                    <li><i class="fas fa-check-circle"></i> Надежная доставка</li>
+                    <li><i class="fas fa-reply"></i> Подтверждения</li>
+                    <li><i class="fas fa-redo"></i> Повторная отправка</li>
+                    <li><i class="fas fa-clock"></i> Упорядочивание</li>
+                </ul>
+            </div>
+            
+            <div class="protocol udp">
+                <h2><i class="fas fa-bolt"></i> UDP</h2>
+                <div class="visualization" id="udp-viz">
+                    <div class="endpoint client"><i class="fas fa-laptop"></i> Клиент</div>
+                    <div class="endpoint server"><i class="fas fa-server"></i> Сервер</div>
+                    <div class="connection-line"></div>
+                </div>
+                <ul class="features">
+                    <li><i class="fas fa-tachometer-alt"></i> Максимальная скорость</li>
+                    <li><i class="fas fa-times-circle"></i> Без подтверждений</li>
+                    <li><i class="fas fa-exclamation-triangle"></i> Потери возможны</li>
+                    <li><i class="fas fa-random"></i> Без упорядочивания</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: var(--accent-green);"></div>
+                <span>TCP пакеты</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: var(--accent-blue);"></div>
+                <span>UDP пакеты</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: var(--accent-red);"></div>
+                <span>Потерянные пакеты</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #ffeb3b;"></div>
+                <span>Подтверждения (ACK)</span>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button id="start-btn"><i class="fas fa-play"></i> Старт</button>
+            <button id="reset-btn"><i class="fas fa-sync-alt"></i> Сброс</button>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="tcp-sent">0</div>
+                <div class="stat-label">TCP отправлено</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="tcp-lost">0</div>
+                <div class="stat-label">TCP потеряно</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="udp-sent">0</div>
+                <div class="stat-label">UDP отправлено</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="udp-lost">0</div>
+                <div class="stat-label">UDP потеряно</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Статистика
+        const stats = {
+            tcpSent: 0,
+            tcpLost: 0,
+            udpSent: 0,
+            udpLost: 0
+        };
+        
+        // Обновление статистики на странице
+        function updateStats() {
+            document.getElementById('tcp-sent').textContent = stats.tcpSent;
+            document.getElementById('tcp-lost').textContent = stats.tcpLost;
+            document.getElementById('udp-sent').textContent = stats.udpSent;
+            document.getElementById('udp-lost').textContent = stats.udpLost;
+        }
+        
+        // Создание пакета
+        function createPacket(container, type, x, y, text) {
+            const packet = document.createElement('div');
+            packet.className = `packet ${type}`;
+            packet.textContent = text;
+            packet.style.left = `${x}px`;
+            packet.style.top = `${y}px`;
+            container.appendChild(packet);
+            
+            // Анимация появления
+            gsap.from(packet, {
+                scale: 0.5,
+                opacity: 0,
+                duration: 0.3,
+                ease: "back.out"
+            });
+            
+            return packet;
+        }
+        
+        // Перемещение пакета
+        function movePacket(packet, targetX, targetY, duration = 0.8) {
+            return gsap.to(packet, {
+                x: targetX - parseInt(packet.style.left),
+                y: targetY - parseInt(packet.style.top),
+                duration: duration,
+                ease: "power1.out"
+            });
+        }
+        
+        // Анимация TCP
+        function animateTCP() {
+            const viz = document.getElementById('tcp-viz');
+            const width = viz.clientWidth;
+            const height = viz.clientHeight;
+            
+            // Очищаем визуализацию, но оставляем базовые элементы
+            const client = viz.querySelector('.client');
+            const server = viz.querySelector('.server');
+            const line = viz.querySelector('.connection-line');
+            viz.innerHTML = '';
+            if (client) viz.appendChild(client);
+            if (server) viz.appendChild(server);
+            if (line) viz.appendChild(line);
+            
+            const clientX = 60;
+            const serverX = width - 90;
+            const midY = height / 2;
+            
+            // 3-way handshake
+            const handshake = gsap.timeline();
+            
+            handshake.call(() => {
+                stats.tcpSent++;
+                updateStats();
+                const syn = createPacket(viz, 'tcp', clientX, midY-40, 'SYN');
+                movePacket(syn, serverX, midY-40);
+            })
+            .addPause(0.5)
+            .call(() => {
+                stats.tcpSent++;
+                updateStats();
+                const synAck = createPacket(viz, 'tcp', serverX, midY-20, 'SYN-ACK');
+                movePacket(synAck, clientX, midY-20);
+            })
+            .addPause(0.5)
+            .call(() => {
+                stats.tcpSent++;
+                updateStats();
+                const ack = createPacket(viz, 'tcp', clientX, midY, 'ACK');
+                movePacket(ack, serverX, midY);
+            })
+            .addPause(0.5)
+            .call(() => {
+                // Передача данных
+                for (let i = 1; i <= 5; i++) {
+                    setTimeout(() => {
+                        stats.tcpSent++;
+                        updateStats();
+                        const packet = createPacket(viz, 'tcp', clientX, midY+20*i, i);
+                        
+                        if (Math.random() < 0.2) {
+                            // Пакет потерян
+                            stats.tcpLost++;
+                            updateStats();
+                            gsap.to(packet, {
+                                className: 'packet tcp lost',
+                                duration: 0.3
+                            });
+                            
+                            setTimeout(() => {
+                                stats.tcpSent++;
+                                updateStats();
+                                const retry = createPacket(viz, 'tcp', clientX, midY+20*i, i);
+                                movePacket(retry, serverX, midY+20*i).then(() => {
+                                    stats.tcpSent++;
+                                    updateStats();
+                                    const ack = createPacket(viz, 'ack', serverX, midY+20*i+10, 'ACK');
+                                    movePacket(ack, clientX, midY+20*i+10, 0.5);
+                                });
+                            }, 800);
+                        } else {
+                            movePacket(packet, serverX, midY+20*i).then(() => {
+                                stats.tcpSent++;
+                                updateStats();
+                                const ack = createPacket(viz, 'ack', serverX, midY+20*i+10, 'ACK');
+                                movePacket(ack, clientX, midY+20*i+10, 0.5);
+                            });
+                        }
+                    }, i * 800);
+                }
+            });
+        }
+        
+        // Анимация UDP
+        function animateUDP() {
+            const viz = document.getElementById('udp-viz');
+            const width = viz.clientWidth;
+            const height = viz.clientHeight;
+            
+            // Очищаем визуализацию, но оставляем базовые элементы
+            const client = viz.querySelector('.client');
+            const server = viz.querySelector('.server');
+            const line = viz.querySelector('.connection-line');
+            viz.innerHTML = '';
+            if (client) viz.appendChild(client);
+            if (server) viz.appendChild(server);
+            if (line) viz.appendChild(line);
+            
+            const clientX = 60;
+            const serverX = width - 90;
+            
+            for (let i = 1; i <= 8; i++) {
+                setTimeout(() => {
+                    stats.udpSent++;
+                    updateStats();
+                    const y = 40 + Math.random() * (height - 80);
+                    const packet = createPacket(viz, 'udp', clientX, y, i);
+                    
+                    if (Math.random() < 0.3) {
+                        // Пакет потерян
+                        stats.udpLost++;
+                        updateStats();
+                        gsap.to(packet, {
+                            className: 'packet udp lost',
+                            duration: 0.3
+                        });
+                    } else {
+                        movePacket(packet, serverX, y, 0.6);
+                    }
+                }, i * 400);
+            }
+        }
+        
+        // Обработчики кнопок
+        document.getElementById('start-btn').addEventListener('click', () => {
+            const btn = document.getElementById('start-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Запущено';
+            
+            // Сброс статистики
+            stats.tcpSent = 0;
+            stats.tcpLost = 0;
+            stats.udpSent = 0;
+            stats.udpLost = 0;
+            updateStats();
+            
+            animateTCP();
+            animateUDP();
+            
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-play"></i> Старт';
+            }, 6000);
+        });
+        
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            // Сброс визуализации
+            const tcpViz = document.getElementById('tcp-viz');
+            const udpViz = document.getElementById('udp-viz');
+            
+            tcpViz.innerHTML = `
+                <div class="endpoint client"><i class="fas fa-laptop"></i> Клиент</div>
+                <div class="endpoint server"><i class="fas fa-server"></i> Сервер</div>
+                <div class="connection-line"></div>
+            `;
+            
+            udpViz.innerHTML = `
+                <div class="endpoint client"><i class="fas fa-laptop"></i> Клиент</div>
+                <div class="endpoint server"><i class="fas fa-server"></i> Сервер</div>
+                <div class="connection-line"></div>
+            `;
+            
+            // Сброс статистики
+            stats.tcpSent = 0;
+            stats.tcpLost = 0;
+            stats.udpSent = 0;
+            stats.udpLost = 0;
+            updateStats();
+        });
+    </script>
+</body>
+</html>
