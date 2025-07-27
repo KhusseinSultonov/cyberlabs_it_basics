@@ -97,6 +97,7 @@
     <div class="term-item"><input type="checkbox" id="nic"> <span class="term-label" onclick="showDetails('nic')">Сетевая карта (NIC)</span></div>
     <div class="term-item"><input type="checkbox" id="mac"> <span class="term-label" onclick="showDetails('mac')">MAC-адрес</span></div>
     <div class="term-item"><input type="checkbox" id="switch"> <span class="term-label" onclick="showDetails('switch')">Коммутатор</span></div>
+    <div class="term-item"><input type="checkbox" id="lan"> <span class="term-label" onclick="showDetails('lan')">LAN</span></div>
   </div>
 
   <div class="details" id="details">
@@ -139,7 +140,12 @@
         title: "Коммутатор (Switch)",
         description: "Сетевое устройство, работающее на канальном уровне. В отличие от хаба, он читает MAC-адрес и пересылает кадр только нужному получателю. Это как почтальон, который знает, в какой ящик класть письмо.",
         image: "images/switch.jpeg"
-      }
+      },
+          lan: {
+      title: "LAN (Local Area Network)",
+      description: "Локальная сеть, объединяющая устройства на ограниченной территории — например, дома, в офисе или учебном заведении. Работает на физических и канальных уровнях модели OSI и использует технологии вроде Ethernet и Wi-Fi.",
+      image: "images/lan.png"
+    }
     };
 
     function showDetails(term) {
