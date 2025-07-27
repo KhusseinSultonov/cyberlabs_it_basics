@@ -99,6 +99,7 @@
     <div class="term-item"><input type="checkbox" id="ttl"> <span class="term-label" onclick="showDetails('ttl')">TTL</span></div>
     <div class="term-item"><input type="checkbox" id="traceroute"> <span class="term-label" onclick="showDetails('traceroute')">Traceroute</span></div>
     <div class="term-item"><input type="checkbox" id="ping"> <span class="term-label" onclick="showDetails('ping')">Ping</span></div>
+    <div class="term-item"><input type="checkbox" id="lan"> <span class="term-label" onclick="showDetails('lan')">LAN</span></div>
   </div>
 
   <div class="details" id="details">
@@ -146,6 +147,11 @@
         title: "Ping",
         description: "Инструмент для проверки доступности хоста по IP. Отправляет ICMP-запрос и измеряет задержку в мс. Если пинг прошёл — адрес доступен.",
         image: "images/ping.png"
+      },
+      lan: {
+        title: "LAN (Local Area Network)",
+        description: "Локальная сеть, объединяющая устройства на ограниченной территории — например, дома, в офисе или учебном заведении. Работает на физических и канальных уровнях модели OSI и использует технологии вроде Ethernet и Wi-Fi.",
+        image: "images/lan.png"
       }
     };
 
