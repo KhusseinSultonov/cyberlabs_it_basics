@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Прикладной уровень OSI</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      display: flex;
+      height: 100vh;
+      background-color: #0d1117;
+      color: #c9d1d9;
+    }
+
+    .sidebar {
+      width: 60%;
+      padding: 40px;
+      background: #161b22;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+      overflow-y: auto;
+      border-right: 1px solid #30363d;
+    }
+
+    .details {
+      flex: 1;
+      padding: 40px;
+      background: #0d1117;
+      overflow-y: auto;
+    }
+
+    h2 {
+      color: #f0f6fc;
+      margin-bottom: 20px;
+    }
+
+    .term-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 18px;
+      cursor: pointer;
+      padding: 10px 0;
+      border-bottom: 1px dashed #30363d;
+      transition: background 0.2s;
+    }
+
+    .term-item:hover {
+      background-color: #21262d;
+    }
+
+    .term-item input[type="checkbox"] {
+      margin-right: 12px;
+      accent-color: #58a6ff;
+      transform: scale(1.3);
+    }
+
+    .term-label {
+      font-size: 1.1em;
+      font-weight: 500;
+      color: #c9d1d9;
+      transition: color 0.2s ease;
+    }
+
+    .term-label:hover {
+      color: #58a6ff;
+      text-decoration: underline;
+    }
+
+    .term-title {
+      font-size: 1.6em;
+      margin-bottom: 15px;
+      color: #58a6ff;
+    }
+
+    .term-description {
+      font-size: 1.05em;
+      margin-bottom: 25px;
+      line-height: 1.6;
+    }
+
+    .term-image {
+      max-width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
+      border: 1px solid #30363d;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>Термины прикладного уровня</h2>
+    <div class="term-item"><input type="checkbox" id="http"> <span class="term-label" onclick="showDetails('http')">HTTP/HTTPS</span></div>
+    <div class="term-item"><input type="checkbox" id="ftp"> <span class="term-label" onclick="showDetails('ftp')">FTP</span></div>
+    <div class="term-item"><input type="checkbox" id="smtp"> <span class="term-label" onclick="showDetails('smtp')">SMTP</span></div>
+    <div class="term-item"><input type="checkbox" id="dns"> <span class="term-label" onclick="showDetails('dns')">DNS</span></div>
+    <div class="term-item"><input type="checkbox" id="ssh"> <span class="term-label" onclick="showDetails('ssh')">SSH</span></div>
+    <div class="term-item"><input type="checkbox" id="websocket"> <span class="term-label" onclick="showDetails('websocket')">WebSocket</span></div>
+  </div>
+
+  <div class="details" id="details">
+    <p>Нажмите на термин, чтобы узнать о нём подробнее.</p>
+  </div>
+
+  <script>
+    const termData = {
+      http: {
+        title: "HTTP/HTTPS",
+        description: "Протокол передачи гипертекста (HTTP) - основной протокол для передачи веб-страниц. HTTPS - его защищённая версия с шифрованием. Использует модель клиент-сервер, где браузер (клиент) отправляет запросы к веб-серверу.",
+        image: "images/http.png"
+      },
+      ftp: {
+        title: "FTP",
+        description: "Протокол передачи файлов (File Transfer Protocol) - стандартный сетевой протокол для передачи файлов между клиентом и сервером. Использует отдельные соединения для команд и данных. SFTP - защищённая версия с шифрованием.",
+        image: "images/ftp.png"
+      },
+      smtp: {
+        title: "SMTP",
+        description: "Протокол для передачи электронной почты (Simple Mail Transfer Protocol). Используется для отправки почты с клиента на сервер и между серверами. Работает совместно с POP3/IMAP для получения почты.",
+        image: "images/smtp.png"
+      },
+      dns: {
+        title: "DNS",
+        description: "Система доменных имён (Domain Name System) преобразует удобные для человека доменные имена (например, google.com) в IP-адреса, понятные компьютерам. Работает по иерархии корневых, TLD и авторитативных серверов.",
+        image: "images/dns.png"
+      },
+      ssh: {
+        title: "SSH",
+        description: "Secure Shell - криптографический сетевой протокол для безопасного удалённого управления операционной системой и туннелирования TCP-соединений. Широко используется в UNIX-системах для удалённого администрирования.",
+        image: "images/ssh.png"
+      },
+      websocket: {
+        title: "WebSocket",
+        description: "Протокол полнодуплексной связи поверх TCP, позволяющий открывать интерактивное соединение между браузером и сервером. В отличие от HTTP, не требует многократного открытия соединения для обмена сообщениями.",
+        image: "images/websocket.png"
+      }
+    };
+
+    function showDetails(term) {
+      const container = document.getElementById('details');
+      const data = termData[term];
+      container.innerHTML = `
+        <div class="term-title">${data.title}</div>
+        <div class="term-description">${data.description}</div>
+        <img src="${data.image}" alt="${data.title}" class="term-image">
+      `;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const checkboxes = document.querySelectorAll('.term-item input[type="checkbox"]');
+
+      checkboxes.forEach(checkbox => {
+        const savedState = localStorage.getItem(checkbox.id);
+        if (savedState === 'true') {
+          checkbox.checked = true;
+        }
+
+        checkbox.addEventListener('change', function () {
+          localStorage.setItem(checkbox.id, checkbox.checked);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
