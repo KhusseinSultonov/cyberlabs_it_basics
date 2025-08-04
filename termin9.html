@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Основы серверов и ЦОД</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      display: flex;
+      height: 100vh;
+      background-color: #0d1117;
+      color: #c9d1d9;
+    }
+
+    .sidebar {
+      width: 60%;
+      padding: 40px;
+      background: #161b22;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+      overflow-y: auto;
+      border-right: 1px solid #30363d;
+    }
+
+    .details {
+      flex: 1;
+      padding: 40px;
+      background: #0d1117;
+      overflow-y: auto;
+    }
+
+    h2 {
+      color: #f0f6fc;
+      margin-bottom: 20px;
+    }
+
+    .term-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 18px;
+      cursor: pointer;
+      padding: 10px 0;
+      border-bottom: 1px dashed #30363d;
+      transition: background 0.2s;
+    }
+
+    .term-item:hover {
+      background-color: #21262d;
+    }
+
+    .term-item input[type="checkbox"] {
+      margin-right: 12px;
+      accent-color: #58a6ff;
+      transform: scale(1.3);
+    }
+
+    .term-label {
+      font-size: 1.1em;
+      font-weight: 500;
+      color: #c9d1d9;
+      transition: color 0.2s ease;
+    }
+
+    .term-label:hover {
+      color: #58a6ff;
+      text-decoration: underline;
+    }
+
+    .term-title {
+      font-size: 1.6em;
+      margin-bottom: 15px;
+      color: #58a6ff;
+    }
+
+    .term-description {
+      font-size: 1.05em;
+      margin-bottom: 25px;
+      line-height: 1.6;
+    }
+
+    .term-image {
+      max-width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
+      border: 1px solid #30363d;
+      margin-bottom: 20px;
+    }
+
+    /* Стили для списков */
+    .term-list {
+      margin: 15px 0;
+      padding-left: 20px;
+    }
+    
+    .term-list li {
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>Основные компоненты</h2>
+    <div class="term-item"><input type="checkbox" id="what-is-dc"> <span class="term-label" onclick="showDetails('what-is-dc')">ЦОД</span></div>
+    <div class="term-item"><input type="checkbox" id="server-rack"> <span class="term-label" onclick="showDetails('server-rack')">Серверная стойка</span></div>
+    <div class="term-item"><input type="checkbox" id="server-types"> <span class="term-label" onclick="showDetails('server-types')">Типы серверов</span></div>
+    <div class="term-item"><input type="checkbox" id="storage"> <span class="term-label" onclick="showDetails('storage')">Хранение данных</span></div>
+    <div class="term-item"><input type="checkbox" id="network"> <span class="term-label" onclick="showDetails('network')">Сетевое оборудование</span></div>
+    <div class="term-item"><input type="checkbox" id="security"> <span class="term-label" onclick="showDetails('security')">Безопасность</span></div>
+    <div class="term-item"><input type="checkbox" id="cooling"> <span class="term-label" onclick="showDetails('cooling')">Охлаждение</span></div>
+    <div class="term-item"><input type="checkbox" id="power"> <span class="term-label" onclick="showDetails('power')">Питание</span></div>
+  </div>
+
+  <div class="details" id="details">
+    <p>Выберите компонент слева, чтобы узнать основы.</p>
+  </div>
+
+  <script>
+    const termData = {
+      'what-is-dc': {
+        title: "ЦОД",
+        description: "Центр обработки данных (ЦОД) - это специальное помещение, где размещается множество серверов и сетевого оборудования.",
+        details: `
+          <p>Основные задачи ЦОД:</p>
+          <ul class="term-list">
+            <li>Хранение и обработка больших объёмов данных</li>
+            <li>Обеспечение бесперебойной работы интернет-сервисов</li>
+            <li>Защита оборудования от внешних воздействий</li>
+            <li>Обеспечение надёжного электропитания и охлаждения</li>
+          </ul>
+        `,
+        image: "images/dc.jpg"
+      },
+      'server-rack': {
+        title: "Серверная стойка",
+        description: "Металлический шкаф для размещения серверного оборудования.",
+        details: `
+          <p>Основные характеристики:</p>
+          <ul class="term-list">
+            <li>Стандартная ширина: 19 дюймов</li>
+            <li>Высота измеряется в юнитах (U), где 1U = 1.75 дюйма</li>
+            <li>Типичная высота: 42U (около 2 метров)</li>
+            <li>В стойках размещают: серверы, коммутаторы, системы хранения</li>
+          </ul>
+        `,
+        image: "images/rack.jpg"
+      },
+      'server-types': {
+        title: "Типы серверов",
+        description: "Основные виды серверного оборудования:",
+        details: `
+          <ul class="term-list">
+            <li><strong>Стоечные серверы</strong> - стандартные серверы высотой 1U-4U</li>
+            <li><strong>Блейд-серверы</strong> - компактные серверы, размещаемые в общем шасси</li>
+            <li><strong>Модульные системы</strong> - гибкие конфигурации с общими ресурсами</li>
+            <li><strong>Tower серверы</strong> - автономные решения в корпусе-башне</li>
+          </ul>
+          <p>Основные производители: Dell, HPE, Lenovo, IBM, Supermicro</p>
+        `,
+        image: "images/servers.jpg"
+      },
+      'storage': {
+        title: "Хранение данных",
+        description: "Технологии хранения информации в ЦОД:",
+        details: `
+          <p>Типы накопителей:</p>
+          <ul class="term-list">
+            <li><strong>HDD</strong> - жёсткие диски (большой объём, низкая цена)</li>
+            <li><strong>SSD</strong> - твердотельные накопители (высокая скорость)</li>
+            <li><strong>NVMe</strong> - сверхбыстрые SSD для критичных задач</li>
+          </ul>
+          
+          <p>Системы хранения:</p>
+          <ul class="term-list">
+            <li><strong>DAS</strong> - прямое подключение к серверу</li>
+            <li><strong>NAS</strong> - сетевое файловое хранилище</li>
+            <li><strong>SAN</strong> - высокоскоростная сеть хранения данных</li>
+          </ul>
+        `,
+        image: "images/storage.png"
+      },
+      'network': {
+        title: "Сетевое оборудование",
+        description: "Компоненты для соединения устройств в ЦОД:",
+        details: `
+          <ul class="term-list">
+            <li><strong>Коммутаторы</strong> - соединяют устройства в локальной сети (Cisco, Juniper)</li>
+            <li><strong>Маршрутизаторы</strong> - обеспечивают соединение между сетями</li>
+            <li><strong>Кабельная инфраструктура</strong>:
+              <ul>
+                <li>Медные кабели (витая пара Cat6/Cat6a)</li>
+                <li>Оптические кабели (одномодовые/многомодовые)</li>
+              </ul>
+            </li>
+            <li><strong>Скорости подключения</strong>: от 1Gbps до 400Gbps</li>
+          </ul>
+        `,
+        image: "images/network.jpg"
+      },
+      'security': {
+        title: "Безопасность",
+        description: "Компоненты защиты данных и оборудования:",
+        details: `
+          <ul class="term-list">
+            <li><strong>Межсетевые экраны (Firewall)</strong> - защита от сетевых атак</li>
+            <li><strong>Системы обнаружения вторжений (IDS/IPS)</strong></li>
+            <li><strong>Физическая безопасность</strong>:
+              <ul>
+                <li>Контроль доступа в помещения</li>
+                <li>Видеонаблюдение</li>
+                <li>Системы сигнализации</li>
+              </ul>
+            </li>
+            <li><strong>Резервное копирование данных</strong></li>
+          </ul>
+        `,
+        image: "images/security.png"
+      },
+      'cooling': {
+        title: "Охлаждение",
+        description: "Системы отвода тепла от серверного оборудования:",
+        details: `
+          <ul class="term-list">
+            <li><strong>Воздушное охлаждение</strong>:
+              <ul>
+                <li>Вентиляторы в серверах</li>
+                <li>Кондиционеры (CRAC/CRAH)</li>
+              </ul>
+            </li>
+            <li><strong>Жидкостное охлаждение</strong> - для мощных серверов</li>
+            <li><strong>Организация воздушных потоков</strong>:
+              <ul>
+                <li>Горячие и холодные коридоры</li>
+                <li>Перфорированные двери и панели</li>
+              </ul>
+            </li>
+          </ul>
+        `,
+        image: "images/cooling.png"
+      },
+      'power': {
+        title: "Питание",
+        description: "Системы электропитания серверного оборудования:",
+        details: `
+          <ul class="term-list">
+            <li><strong>Источники бесперебойного питания (ИБП/UPS)</strong>:
+              <ul>
+                <li>Обеспечивают питание при отключении электричества</li>
+                <li>Время работы: от нескольких минут до часов</li>
+              </ul>
+            </li>
+            <li><strong>Дизель-генераторы</strong> - долговременное резервное питание</li>
+            <li><strong>Распределители питания (PDU)</strong>:
+              <ul>
+                <li>Basic - простые распределители</li>
+                <li>Metered - с измерением потребления</li>
+                <li>Switched - с удалённым управлением</li>
+              </ul>
+            </li>
+            <li><strong>Схемы резервирования</strong>: N+1, 2N</li>
+          </ul>
+        `,
+        image: "images/power.png"
+      }
+    };
+
+    function showDetails(term) {
+      const container = document.getElementById('details');
+      const data = termData[term];
+      container.innerHTML = `
+        <div class="term-title">${data.title}</div>
+        <div class="term-description">${data.description}</div>
+        ${data.details || ''}
+        <img src="${data.image}" alt="${data.title}" class="term-image">
+      `;
+    }
+
+    // Сохраняем состояние чекбоксов
+    document.addEventListener('DOMContentLoaded', function () {
+      const checkboxes = document.querySelectorAll('.term-item input[type="checkbox"]');
+
+      checkboxes.forEach(checkbox => {
+        const savedState = localStorage.getItem(checkbox.id);
+        if (savedState === 'true') {
+          checkbox.checked = true;
+        }
+
+        checkbox.addEventListener('change', function () {
+          localStorage.setItem(checkbox.id, checkbox.checked);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
