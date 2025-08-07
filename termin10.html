@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Гипервизоры и виртуальные машины</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      display: flex;
+      height: 100vh;
+      background-color: #0d1117;
+      color: #c9d1d9;
+    }
+
+    .sidebar {
+      width: 60%;
+      padding: 40px;
+      background: #161b22;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+      overflow-y: auto;
+      border-right: 1px solid #30363d;
+    }
+
+    .details {
+      flex: 1;
+      padding: 40px;
+      background: #0d1117;
+      overflow-y: auto;
+    }
+
+    h2 {
+      color: #f0f6fc;
+      margin-bottom: 20px;
+    }
+
+    .term-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 18px;
+      cursor: pointer;
+      padding: 10px 0;
+      border-bottom: 1px dashed #30363d;
+      transition: background 0.2s;
+    }
+
+    .term-item:hover {
+      background-color: #21262d;
+    }
+
+    .term-item input[type="checkbox"] {
+      margin-right: 12px;
+      accent-color: #58a6ff;
+      transform: scale(1.3);
+    }
+
+    .term-label {
+      font-size: 1.1em;
+      font-weight: 500;
+      color: #c9d1d9;
+      transition: color 0.2s ease;
+    }
+
+    .term-label:hover {
+      color: #58a6ff;
+      text-decoration: underline;
+    }
+
+    .term-title {
+      font-size: 1.6em;
+      margin-bottom: 15px;
+      color: #58a6ff;
+    }
+
+    .term-description {
+      font-size: 1.05em;
+      margin-bottom: 25px;
+      line-height: 1.6;
+    }
+
+    .term-image {
+      max-width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
+      border: 1px solid #30363d;
+      margin-bottom: 20px;
+    }
+
+    /* Стили для списков */
+    .term-list {
+      margin: 15px 0;
+      padding-left: 20px;
+    }
+    
+    .term-list li {
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>Гипервизоры и виртуальные машины</h2>
+    <div class="term-item"><input type="checkbox" id="virtualization"> <span class="term-label" onclick="showDetails('virtualization')">Виртуализация</span></div>
+    <div class="term-item"><input type="checkbox" id="hypervisor-types"> <span class="term-label" onclick="showDetails('hypervisor-types')">Типы гипервизоров</span></div>
+    <div class="term-item"><input type="checkbox" id="vm"> <span class="term-label" onclick="showDetails('vm')">Виртуальные машины</span></div>
+    <div class="term-item"><input type="checkbox" id="vm-management"> <span class="term-label" onclick="showDetails('vm-management')">Управление ВМ</span></div>
+    <div class="term-item"><input type="checkbox" id="popular-hypervisors"> <span class="term-label" onclick="showDetails('popular-hypervisors')">Популярные гипервизоры</span></div>
+    <div class="term-item"><input type="checkbox" id="containers"> <span class="term-label" onclick="showDetails('containers')">Контейнеры vs ВМ</span></div>
+    <div class="term-item"><input type="checkbox" id="cloud-virtualization"> <span class="term-label" onclick="showDetails('cloud-virtualization')">Виртуализация в облаке</span></div>
+  </div>
+
+  <div class="details" id="details">
+    <p>Выберите тему слева, чтобы узнать о гипервизорах и виртуальных машинах.</p>
+  </div>
+
+  <script>
+    const termData = {
+      'virtualization': {
+        title: "Виртуализация",
+        description: "Технология создания виртуальных версий физических ресурсов (серверов, хранилищ, сетей).",
+        details: `
+          <p>Основные принципы виртуализации:</p>
+          <ul class="term-list">
+            <li>Абстрагирование физических ресурсов</li>
+            <li>Изоляция рабочих нагрузок</li>
+            <li>Эффективное использование оборудования</li>
+            <li>Гибкость в управлении ресурсами</li>
+          </ul>
+          <p>Виртуализация позволяет запускать несколько изолированных операционных систем на одном физическом сервере.</p>
+        `,
+        image: "images/virtualization.png"
+      },
+      'hypervisor-types': {
+        title: "Типы гипервизоров",
+        description: "Гипервизор (монитор виртуальных машин) - программное обеспечение, которое создает и управляет виртуальными машинами.",
+        details: `
+          <p><strong>Тип 1 (bare-metal):</strong></p>
+          <ul class="term-list">
+            <li>Работает непосредственно на аппаратном обеспечении</li>
+            <li>Высокая производительность</li>
+            <li>Примеры: VMware ESXi, Microsoft Hyper-V, Xen, KVM</li>
+          </ul>
+          
+          <p><strong>Тип 2 (hosted):</strong></p>
+          <ul class="term-list">
+            <li>Работает как приложение в основной ОС</li>
+            <li>Проще в установке и настройке</li>
+            <li>Примеры: VMware Workstation, Oracle VirtualBox, Parallels</li>
+          </ul>
+        `,
+        image: "images/hypervisors.png"
+      },
+      'vm': {
+        title: "Виртуальные машины",
+        description: "Виртуальная машина (ВМ) - изолированная программная среда, эмулирующая работу физического компьютера.",
+        details: `
+          <p>Характеристики виртуальных машин:</p>
+          <ul class="term-list">
+            <li>Собственные виртуальные ресурсы (CPU, RAM, диск, сеть)</li>
+            <li>Изолированная операционная система</li>
+            <li>Переносимость между физическими серверами</li>
+            <li>Снимки состояния (snapshots)</li>
+          </ul>
+          
+          <p>Компоненты ВМ:</p>
+          <ul class="term-list">
+            <li>Виртуальный процессор (vCPU)</li>
+            <li>Виртуальная память (vRAM)</li>
+            <li>Виртуальные диски (vDisk)</li>
+            <li>Виртуальные сетевые адаптеры (vNIC)</li>
+          </ul>
+        `,
+        image: "images/vm.png"
+      },
+      'vm-management': {
+        title: "Управление ВМ",
+        description: "Инструменты для управления виртуальными машинами и инфраструктурой виртуализации.",
+        details: `
+          <p>Основные функции управления:</p>
+          <ul class="term-list">
+            <li>Создание, запуск, остановка ВМ</li>
+            <li>Настройка ресурсов (CPU, RAM, диск)</li>
+            <li>Миграция ВМ между хостами (vMotion, Live Migration)</li>
+            <li>Резервное копирование и восстановление</li>
+            <li>Мониторинг производительности</li>
+          </ul>
+          
+          <p>Популярные системы управления:</p>
+          <ul class="term-list">
+            <li>VMware vCenter</li>
+            <li>Microsoft System Center Virtual Machine Manager</li>
+            <li>Proxmox VE</li>
+            <li>oVirt</li>
+          </ul>
+        `,
+        image: "images/vm-management.png"
+      },
+      'popular-hypervisors': {
+        title: "Популярные гипервизоры",
+        description: "Сравнение наиболее распространенных платформ виртуализации.",
+        details: `
+          <ul class="term-list">
+            <li><strong>VMware vSphere/ESXi</strong>:
+              <ul>
+                <li>Лидер рынка корпоративной виртуализации</li>
+                <li>Широкие возможности управления</li>
+                <li>Высокая производительность</li>
+              </ul>
+            </li>
+            
+            <li><strong>Microsoft Hyper-V</strong>:
+              <ul>
+                <li>Интегрирован с Windows Server</li>
+                <li>Бесплатный вариант (Hyper-V Server)</li>
+                <li>Хорошая поддержка Windows-гостей</li>
+              </ul>
+            </li>
+            
+            <li><strong>KVM (Kernel-based Virtual Machine)</strong>:
+              <ul>
+                <li>Открытое решение, встроено в Linux</li>
+                <li>Высокая производительность</li>
+                <li>Используется в OpenStack, oVirt</li>
+              </ul>
+            </li>
+            
+            <li><strong>Xen</strong>:
+              <ul>
+                <li>Популярен в облачных провайдерах</li>
+                <li>Поддержка паравиртуализации</li>
+                <li>Используется в Amazon EC2</li>
+              </ul>
+            </li>
+          </ul>
+        `,
+        image: "images/hypervisor-comparison.png"
+      },
+      'containers': {
+        title: "Контейнеры vs ВМ",
+        description: "Сравнение виртуальных машин и контейнерных технологий.",
+        details: `
+          <table style="width:100%; border-collapse: collapse; margin: 20px 0;">
+            <tr style="border-bottom: 1px solid #30363d;">
+              <th style="text-align: left; padding: 8px 0;">Характеристика</th>
+              <th style="text-align: left; padding: 8px 0;">Виртуальные машины</th>
+              <th style="text-align: left; padding: 8px 0;">Контейнеры</th>
+            </tr>
+            <tr style="border-bottom: 1px solid #30363d;">
+              <td style="padding: 8px 0;">Изоляция</td>
+              <td style="padding: 8px 0;">Полная (аппаратный уровень)</td>
+              <td style="padding: 8px 0;">На уровне процессов</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #30363d;">
+              <td style="padding: 8px 0;">Ресурсы</td>
+              <td style="padding: 8px 0;">Выделенные виртуальные ресурсы</td>
+              <td style="padding: 8px 0;">Разделяют ядро ОС хоста</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #30363d;">
+              <td style="padding: 8px 0;">Загрузка</td>
+              <td style="padding: 8px 0;">Медленнее (загрузка всей ОС)</td>
+              <td style="padding: 8px 0;">Быстрее (общее ядро)</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #30363d;">
+              <td style="padding: 8px 0;">Использование</td>
+              <td style="padding: 8px 0;">Разные ОС на одном железе</td>
+              <td style="padding: 8px 0;">Одно ядро ОС, разные пользовательские пространства</td>
+            </tr>
+          </table>
+          <p>Примеры контейнерных технологий: Docker, LXC, Kubernetes</p>
+        `,
+        image: "images/vm-vs-containers.png"
+      },
+      'cloud-virtualization': {
+        title: "Виртуализация в облаке",
+        description: "Использование технологий виртуализации в облачных сервисах.",
+        details: `
+          <p>Как облачные провайдеры используют виртуализацию:</p>
+          <ul class="term-list">
+            <li>Мультитенантность - изоляция клиентов на одном железе</li>
+            <li>Быстрое развертывание виртуальных серверов</li>
+            <li>Гибкое масштабирование ресурсов</li>
+            <li>Высокая доступность и отказоустойчивость</li>
+          </ul>
+          
+          <p>Примеры облачных сервисов:</p>
+          <ul class="term-list">
+            <li><strong>Amazon EC2</strong> - использует Xen и KVM</li>
+            <li><strong>Microsoft Azure</strong> - Hyper-V</li>
+            <li><strong>Google Compute Engine</strong> - KVM</li>
+            <li><strong>VMware Cloud</strong> - ESXi</li>
+          </ul>
+        `,
+        image: "images/cloud-virtualization.png"
+      }
+    };
+
+    function showDetails(term) {
+      const container = document.getElementById('details');
+      const data = termData[term];
+      container.innerHTML = `
+        <div class="term-title">${data.title}</div>
+        <div class="term-description">${data.description}</div>
+        ${data.details || ''}
+        <img src="${data.image}" alt="${data.title}" class="term-image">
+      `;
+    }
+
+    // Сохраняем состояние чекбоксов
+    document.addEventListener('DOMContentLoaded', function () {
+      const checkboxes = document.querySelectorAll('.term-item input[type="checkbox"]');
+
+      checkboxes.forEach(checkbox => {
+        const savedState = localStorage.getItem(checkbox.id);
+        if (savedState === 'true') {
+          checkbox.checked = true;
+        }
+
+        checkbox.addEventListener('change', function () {
+          localStorage.setItem(checkbox.id, checkbox.checked);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
