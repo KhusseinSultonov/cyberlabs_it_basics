@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Игра: Модель OSI</title>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Игра: Модель OSI</title>
+<style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
@@ -268,40 +269,33 @@
     </style>
 </head>
 <body>
-    <div class="container" id="game-container">
-        <h1>Модель OSI: Сопоставление элементов</h1>
-        
-        <div class="game-header">
-            <div class="score">Счет: <span id="score">0</span></div>
-            <div>Попыток: <span id="attempts">0</span></div>
-            <button class="btn" id="new-game-btn">Новая игра</button>
-        </div>
-        
-        <div class="feedback" id="feedback"></div>
-        
-        <div class="game-area">
-            <div class="levels">
-                <h2>Уровни модели OSI</h2>
-                <div id="levels-container"></div>
-            </div>
-            
-            <div class="items">
-                <h2>Доступные элементы</h2>
-                <div id="items-container"></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="completion-screen" id="completion-screen">
-        <div class="trophy">🏆</div>
-        <div class="completion-text">Поздравляем!<br>Вы успешно завершили игру!</div>
-        <div>Ваш результат: <span id="final-score">0</span> из <span id="total-questions">0</span></div>
-        <button class="restart-btn" id="restart-btn">Играть снова</button>
-        <div id="confetti-container"></div>
-        <div class="exit-hint">Для выхода нажмите Esc</div>
-    </div>
-
-    <script>
+<div class="container" id="game-container">
+<h1>Модель OSI: Сопоставление элементов</h1>
+<div class="game-header">
+<div class="score">Счет: <span id="score">0</span></div>
+<div>Попыток: <span id="attempts">0</span></div>
+<button class="btn" id="new-game-btn">Новая игра</button><button class="btn" id="fullscreen-btn">⛶ Полный экран</button>
+</div>
+<div class="feedback" id="feedback"></div>
+<div class="game-area">
+<div class="levels">
+<h2>Уровни модели OSI</h2>
+<div id="levels-container"></div>
+</div>
+<div class="items">
+<h2>Доступные элементы</h2>
+<div id="items-container"></div>
+</div>
+</div>
+</div>
+<div class="completion-screen" id="completion-screen">
+<div class="trophy">🏆</div>
+<div class="completion-text">Поздравляем!<br/>Вы успешно завершили игру!</div>
+<div>Ваш результат: <span id="final-score">0</span> из <span id="total-questions">0</span></div>
+<button class="restart-btn" id="restart-btn">Играть снова</button>
+<div id="confetti-container"></div>
+</div>
+<script>
         document.addEventListener('DOMContentLoaded', function() {
             const game = {
                 score: 0,
@@ -590,6 +584,19 @@
             };
             
             // Инициализируем игру
+            
+// Полноэкранный режим
+document.getElementById('fullscreen-btn').addEventListener('click', () => {
+    const gameContainer = document.documentElement; // можно document.getElementById('game-container')
+    if (!document.fullscreenElement) {
+        gameContainer.requestFullscreen().catch(err => {
+            alert(`Ошибка при переходе в полный экран: ${err.message}`);
+        });
+    } else {
+        document.exitFullscreen();
+    }
+});
+
             game.init();
         });
     </script>
