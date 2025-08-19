@@ -359,9 +359,46 @@
             cursor: pointer;
             font-size: 16px;
         }
+        
+        /* Стили для кнопки полноэкранного режима */
+        .fullscreen-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: #58a6ff;
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 100;
+            opacity: 0.7;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .fullscreen-btn:hover { 
+            opacity: 1;
+            background: rgba(0, 0, 0, 0.7);
+        }
+        @media (max-width: 768px) {
+            .fullscreen-btn {
+                top: 10px;
+                right: 10px;
+                font-size: 20px;
+                width: 36px;
+                height: 36px;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Кнопка полноэкранного режима -->
+    <button id="fullscreen-btn" class="fullscreen-btn" title="Полноэкранный режим">⛶</button>
+    
     <div class="container">
         <header>
             <h1>Биты и кадры</h1>
@@ -503,6 +540,7 @@
         };
         const packetInfo = document.getElementById('packetInfo');
         const closeInfo = document.getElementById('closeInfo');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
         
         // Состояние
         let isRunning = false;
@@ -784,6 +822,21 @@
                 clearTimeout(currentPacketInfo);
                 currentPacketInfo = null;
             }
+        });
+        
+        /* Полноэкранный режим */
+        fullscreenBtn.addEventListener('click', function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Ошибка: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        });
+
+        document.addEventListener('fullscreenchange', function() {
+            fullscreenBtn.textContent = document.fullscreenElement ? '🗗' : '⛶';
         });
         
         // Инициализация
