@@ -12,6 +12,25 @@
     height: 100vh;
     background-color: #0d1117;
     color: #c9d1d9;
+    position: relative; /* для кнопки */
+  }
+
+  .fullscreen-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: #58a6ff;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 100;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+
+  .fullscreen-btn:hover {
+    opacity: 1;
   }
 
   .sidebar {
@@ -88,6 +107,9 @@
 </style>
 </head>
 <body>
+  <!-- кнопка полноэкранного режима -->
+  <button id="fullscreen-btn" class="fullscreen-btn" title="Полноэкранный режим">⛶</button>
+
   <div class="sidebar">
     <h2>Термины для изучения</h2>
     <div class="term-item"><input type="checkbox" id="utp"> <span class="term-label" onclick="showDetails('utp')">UTP</span></div>
@@ -97,7 +119,6 @@
     <div class="term-item"><input type="checkbox" id="nic"> <span class="term-label" onclick="showDetails('nic')">Сетевая карта (NIC)</span></div>
     <div class="term-item"><input type="checkbox" id="mac"> <span class="term-label" onclick="showDetails('mac')">MAC-адрес</span></div>
     <div class="term-item"><input type="checkbox" id="switch"> <span class="term-label" onclick="showDetails('switch')">Коммутатор</span></div>
-    <div class="term-item"><input type="checkbox" id="lan"> <span class="term-label" onclick="showDetails('lan')">LAN</span></div>
   </div>
 
   <div class="details" id="details">
@@ -105,6 +126,25 @@
   </div>
 
   <script>
+    // Полноэкранный режим
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+    fullscreenBtn.addEventListener('click', function() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.log(`Ошибка при переходе в полный экран: ${err.message}`);
+        });
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    });
+
+    document.addEventListener('fullscreenchange', function() {
+      fullscreenBtn.textContent = document.fullscreenElement ? '🗗' : '⛶';
+    });
+
+    // Данные терминов
     const termData = {
       utp: {
         title: "UTP (Unshielded Twisted Pair)",
@@ -140,12 +180,7 @@
         title: "Коммутатор (Switch)",
         description: "Сетевое устройство, работающее на канальном уровне. В отличие от хаба, он читает MAC-адрес и пересылает кадр только нужному получателю. Это как почтальон, который знает, в какой ящик класть письмо.",
         image: "images/switch.jpeg"
-      },
-          lan: {
-      title: "LAN (Local Area Network)",
-      description: "Локальная сеть, объединяющая устройства на ограниченной территории — например, дома, в офисе или учебном заведении. Работает на физических и канальных уровнях модели OSI и использует технологии вроде Ethernet и Wi-Fi.",
-      image: "images/lan.png"
-    }
+      }
     };
 
     function showDetails(term) {
@@ -162,14 +197,12 @@
     document.addEventListener('DOMContentLoaded', function() {
       const checkboxes = document.querySelectorAll('.term-item input[type="checkbox"]');
       
-      // Восстановление состояния из localStorage
       checkboxes.forEach(checkbox => {
         const savedState = localStorage.getItem(checkbox.id);
         if (savedState === 'true') {
           checkbox.checked = true;
         }
         
-        // Сохранение состояния при изменении
         checkbox.addEventListener('change', function() {
           localStorage.setItem(checkbox.id, checkbox.checked);
         });
