@@ -12,7 +12,24 @@
       height: 100vh;
       background-color: #0d1117;
       color: #c9d1d9;
+      position: relative; /* для кнопки */
     }
+
+    /* Кнопка полноэкранного режима */
+    .fullscreen-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: #58a6ff;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 100;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    .fullscreen-btn:hover { opacity: 1; }
 
     .sidebar {
       width: 60%;
@@ -89,6 +106,9 @@
   </style>
 </head>
 <body>
+  <!-- Кнопка полноэкранного режима -->
+  <button id="fullscreen-btn" class="fullscreen-btn" title="Полноэкранный режим">⛶</button>
+
   <div class="sidebar">
     <h2>Термины прикладного уровня</h2>
     <div class="term-item"><input type="checkbox" id="http"> <span class="term-label" onclick="showDetails('http')">HTTP/HTTPS</span></div>
@@ -160,6 +180,22 @@
           localStorage.setItem(checkbox.id, checkbox.checked);
         });
       });
+    });
+
+    /* Полноэкранный режим */
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+    fullscreenBtn.addEventListener('click', function() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.log(`Ошибка: ${err.message}`);
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    });
+
+    document.addEventListener('fullscreenchange', function() {
+      fullscreenBtn.textContent = document.fullscreenElement ? '🗗' : '⛶';
     });
   </script>
 </body>
