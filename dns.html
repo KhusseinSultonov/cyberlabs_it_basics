@@ -23,6 +23,10 @@
     }
     .controls {
       display: flex; gap: 10px; margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .input-group {
+      display: flex; gap: 10px; flex: 1;
     }
     input, button {
       padding: 10px 15px; border-radius: 8px;
@@ -35,6 +39,10 @@
     button {
       background: var(--accent); color: white;
       font-weight: bold; cursor: pointer;
+      white-space: nowrap;
+    }
+    button.secondary {
+      background: rgba(255,255,255,0.1);
     }
     .visualization {
       position: relative; height: 400px;
@@ -69,6 +77,19 @@
     }
     .success { color: var(--success); }
     .error { color: var(--danger); }
+    
+    /* Стили для полноэкранного режима */
+    .fullscreen .container {
+      max-width: none; width: 95%;
+      height: 95vh;
+    }
+    .fullscreen .visualization {
+      height: 70vh;
+    }
+    .fullscreen .result {
+      font-size: 22px;
+      padding: 20px;
+    }
   </style>
 </head>
 <body>
@@ -77,8 +98,11 @@
     <p>Узнайте как доменные имена преобразуются в IP-адреса и обратно</p>
     
     <div class="controls">
-      <input id="input" type="text" placeholder="Введите домен или IP" value="example.com" />
-      <button id="resolve">Преобразовать</button>
+      <div class="input-group">
+        <input id="input" type="text" placeholder="Введите домен или IP" value="example.com" />
+        <button id="resolve">Преобразовать</button>
+      </div>
+      <button id="fullscreen" class="secondary">Полный экран</button>
     </div>
     
     <div class="visualization">
@@ -109,8 +133,10 @@
   <script>
     const input = document.getElementById('input');
     const resolveBtn = document.getElementById('resolve');
+    const fullscreenBtn = document.getElementById('fullscreen');
     const result = document.getElementById('result');
     const visualization = document.querySelector('.visualization');
+    const container = document.querySelector('.container');
     
     // Примеры данных для демонстрации
     const dnsRecords = {
@@ -174,10 +200,33 @@
       }
     }
     
+    // Функция для переключения полноэкранного режима
+    function toggleFullscreen() {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.error(`Ошибка при переходе в полноэкранный режим: ${err.message}`);
+        });
+      }
+    }
+    
     // Обработчики событий
     resolveBtn.addEventListener('click', resolve);
     input.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') resolve();
+    });
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+    
+    // Следим за изменениями полноэкранного режима
+    document.addEventListener('fullscreenchange', () => {
+      if (document.fullscreenElement) {
+        document.body.classList.add('fullscreen');
+        fullscreenBtn.textContent = 'Обычный режим';
+      } else {
+        document.body.classList.remove('fullscreen');
+        fullscreenBtn.textContent = 'Полный экран';
+      }
     });
   </script>
 </body>
