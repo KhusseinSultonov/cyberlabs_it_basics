@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ru">
 <head>
 <meta charset="utf-8"/>
@@ -171,6 +170,7 @@
             cursor: pointer;
             font-size: 1em;
             transition: all 0.3s ease;
+            margin-left: 10px;
         }
         
         .btn:hover {
@@ -265,6 +265,15 @@
             .completion-text {
                 font-size: 2em;
             }
+            
+            .game-header {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .btn {
+                margin: 5px;
+            }
         }
     </style>
 </head>
@@ -274,7 +283,10 @@
 <div class="game-header">
 <div class="score">Счет: <span id="score">0</span></div>
 <div>Попыток: <span id="attempts">0</span></div>
-<button class="btn" id="new-game-btn">Новая игра</button><button class="btn" id="fullscreen-btn">⛶ Полный экран</button>
+<div>
+<button class="btn" id="new-game-btn">Новая игра</button>
+<button class="btn" id="fullscreen-btn">⛶ Полный экран</button>
+</div>
 </div>
 <div class="feedback" id="feedback"></div>
 <div class="game-area">
@@ -354,6 +366,18 @@
                     // Назначаем обработчик для кнопки новой игры
                     document.getElementById('new-game-btn').addEventListener('click', () => {
                         this.resetGame();
+                    });
+                    
+                    // Полноэкранный режим
+                    document.getElementById('fullscreen-btn').addEventListener('click', () => {
+                        const container = document.getElementById('game-container');
+                        if (!document.fullscreenElement) {
+                            container.requestFullscreen().catch(err => {
+                                console.log(`Ошибка при переходе в полный экран: ${err.message}`);
+                            });
+                        } else {
+                            document.exitFullscreen();
+                        }
                     });
                     
                     // Обработчики для drag and drop
@@ -584,19 +608,6 @@
             };
             
             // Инициализируем игру
-            
-// Полноэкранный режим
-document.getElementById('fullscreen-btn').addEventListener('click', () => {
-    const gameContainer = document.documentElement; // можно document.getElementById('game-container')
-    if (!document.fullscreenElement) {
-        gameContainer.requestFullscreen().catch(err => {
-            alert(`Ошибка при переходе в полный экран: ${err.message}`);
-        });
-    } else {
-        document.exitFullscreen();
-    }
-});
-
             game.init();
         });
     </script>
