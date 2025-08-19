@@ -12,8 +12,28 @@
       height: 100vh;
       background-color: #0d1117;
       color: #c9d1d9;
+      position: relative; /* Добавляем для позиционирования иконки */
     }
 
+    .fullscreen-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: #58a6ff;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 100;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    .fullscreen-btn:hover {
+      opacity: 1;
+    }
+
+    /* Остальные стили остаются без изменений */
     .sidebar {
       width: 60%;
       padding: 40px;
@@ -86,9 +106,29 @@
       border: 1px solid #30363d;
       margin-bottom: 20px;
     }
+
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+        height: auto;
+      }
+      
+      .sidebar, .details {
+        width: auto;
+        padding: 20px;
+      }
+      
+      .sidebar {
+        border-right: none;
+        border-bottom: 1px solid #30363d;
+      }
+    }
   </style>
 </head>
 <body>
+  <!-- Добавляем иконку полноэкранного режима -->
+  <button id="fullscreen-btn" class="fullscreen-btn" title="Полноэкранный режим">⛶</button>
+
   <div class="sidebar">
     <h2>Компоненты сервера</h2>
     <div class="term-item"><input type="checkbox" id="cpu"> <span class="term-label" onclick="showDetails('cpu')">Процессор (CPU)</span></div>
@@ -99,7 +139,6 @@
     <div class="term-item"><input type="checkbox" id="cooling"> <span class="term-label" onclick="showDetails('cooling')">Системы охлаждения</span></div>
     <div class="term-item"><input type="checkbox" id="motherboard"> <span class="term-label" onclick="showDetails('motherboard')">Материнская плата</span></div>
     <div class="term-item"><input type="checkbox" id="raid"> <span class="term-label" onclick="showDetails('raid')">RAID-массивы</span></div>
-  <button id="fullscreen-btn" style="margin-top: 20px; padding: 10px; background: #58a6ff; color: white; border: none; border-radius: 5px; cursor: pointer;">Полный экран</button>
   </div>
 
   <div class="details" id="details">
@@ -107,6 +146,27 @@
   </div>
 
   <script>
+    // Функционал полноэкранного режима
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+    
+    fullscreenBtn.addEventListener('click', function() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.log(`Ошибка при переходе в полный экран: ${err.message}`);
+        });
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    });
+
+    // Обновляем иконку при изменении состояния
+    document.addEventListener('fullscreenchange', function() {
+      fullscreenBtn.textContent = document.fullscreenElement ? '🗗' : '⛶';
+    });
+
+    // Остальной JavaScript код остается без изменений
     const termData = {
       cpu: {
         title: "Процессор (CPU)",
@@ -175,28 +235,6 @@
         });
       });
     });
-// Функционал полноэкранного режима
-document.getElementById('fullscreen-btn').addEventListener('click', function() {
-    if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(err => {
-            console.log(`Ошибка при переходе в полный экран: ${err.message}`);
-        });
-    } else {
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        }
-    }
-});
-
-// Обработка изменения состояния полноэкранного режима
-document.addEventListener('fullscreenchange', function() {
-    const btn = document.getElementById('fullscreen-btn');
-    if (document.fullscreenElement) {
-        btn.textContent = 'Выйти из полного экрана';
-    } else {
-        btn.textContent = 'Полный экран';
-    }
-});
   </script>
 </body>
 </html>
