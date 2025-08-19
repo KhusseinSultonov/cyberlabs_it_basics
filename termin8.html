@@ -99,6 +99,7 @@
     <div class="term-item"><input type="checkbox" id="cooling"> <span class="term-label" onclick="showDetails('cooling')">Системы охлаждения</span></div>
     <div class="term-item"><input type="checkbox" id="motherboard"> <span class="term-label" onclick="showDetails('motherboard')">Материнская плата</span></div>
     <div class="term-item"><input type="checkbox" id="raid"> <span class="term-label" onclick="showDetails('raid')">RAID-массивы</span></div>
+  <button id="fullscreen-btn" style="margin-top: 20px; padding: 10px; background: #58a6ff; color: white; border: none; border-radius: 5px; cursor: pointer;">Полный экран</button>
   </div>
 
   <div class="details" id="details">
@@ -174,6 +175,28 @@
         });
       });
     });
+// Функционал полноэкранного режима
+document.getElementById('fullscreen-btn').addEventListener('click', function() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+            console.log(`Ошибка при переходе в полный экран: ${err.message}`);
+        });
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+    }
+});
+
+// Обработка изменения состояния полноэкранного режима
+document.addEventListener('fullscreenchange', function() {
+    const btn = document.getElementById('fullscreen-btn');
+    if (document.fullscreenElement) {
+        btn.textContent = 'Выйти из полного экрана';
+    } else {
+        btn.textContent = 'Полный экран';
+    }
+});
   </script>
 </body>
 </html>
