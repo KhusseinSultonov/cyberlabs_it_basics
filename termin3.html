@@ -12,6 +12,25 @@
       height: 100vh;
       background-color: #0d1117;
       color: #c9d1d9;
+      position: relative; /* для кнопки */
+    }
+
+    .fullscreen-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: #58a6ff;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 100;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    .fullscreen-btn:hover {
+      opacity: 1;
     }
 
     .sidebar {
@@ -89,6 +108,9 @@
   </style>
 </head>
 <body>
+  <!-- кнопка полноэкранного режима -->
+  <button id="fullscreen-btn" class="fullscreen-btn" title="Полноэкранный режим">⛶</button>
+
   <div class="sidebar">
     <h2>Термины транспортного уровня</h2>
     <div class="term-item"><input type="checkbox" id="tcp"> <span class="term-label" onclick="showDetails('tcp')">TCP</span></div>
@@ -131,11 +153,6 @@
         description: "Механизм установления TCP-соединения, состоящий из трех этапов: 1) Клиент посылает SYN, 2) сервер отвечает SYN-ACK, 3) клиент подтверждает ACK. Только после этого соединение считается установленным.",
         image: "images/3way.png"
       },
-      flow: {
-        title: "Управление потоком",
-        description: "Механизм, позволяющий получателю регулировать скорость передачи данных, чтобы не перегружаться. TCP использует окно скольжения (sliding window), указывающее, сколько байт готов принять получатель.",
-        image: "images/flow.png"
-      },
       retransmit: {
         title: "Повторная передача",
         description: "Если сегмент теряется или искажается при передаче, TCP обнаруживает это с помощью отсутствия подтверждения (ACK) и инициирует повторную отправку. Это обеспечивает надежность передачи.",
@@ -158,6 +175,7 @@
       `;
     }
 
+    // сохранение чекбоксов
     document.addEventListener('DOMContentLoaded', function () {
       const checkboxes = document.querySelectorAll('.term-item input[type="checkbox"]');
 
@@ -171,6 +189,22 @@
           localStorage.setItem(checkbox.id, checkbox.checked);
         });
       });
+    });
+
+    // полноэкранный режим
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+    fullscreenBtn.addEventListener('click', function() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.log(`Ошибка: ${err.message}`);
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    });
+
+    document.addEventListener('fullscreenchange', function() {
+      fullscreenBtn.textContent = document.fullscreenElement ? '🗗' : '⛶';
     });
   </script>
 </body>
