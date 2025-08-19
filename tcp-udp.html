@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCP vs UDP - Интерактивная визуализация</title>
     <!-- Подключаем GSAP для плавной анимации -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
     <!-- Подключаем Font Awesome для иконок -->
@@ -32,6 +33,7 @@
             line-height: 1.6;
             padding: 20px;
             min-height: 100vh;
+            position: relative; /* для кнопки полного экрана */
         }
         
         .container {
@@ -270,6 +272,31 @@
             color: var(--text-secondary);
         }
         
+        /* Кнопка полноэкранного режима */
+        .fullscreen-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: #58a6ff;
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 100;
+            opacity: 0.7;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .fullscreen-btn:hover { 
+            opacity: 1;
+            background: rgba(0, 0, 0, 0.7);
+        }
+        
         @media (max-width: 768px) {
             .protocols-container {
                 flex-direction: column;
@@ -282,10 +309,21 @@
             h1 {
                 font-size: 2rem;
             }
+            
+            .fullscreen-btn {
+                top: 10px;
+                right: 10px;
+                font-size: 20px;
+                width: 36px;
+                height: 36px;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Кнопка полноэкранного режима -->
+    <button id="fullscreen-btn" class="fullscreen-btn" title="Полноэкранный режиm">⛶</button>
+    
     <div class="container">
         <header>
             <h1><i class="fas fa-network-wired"></i> TCP vs UDP</h1>
@@ -584,6 +622,22 @@
             stats.udpSent = 0;
             stats.udpLost = 0;
             updateStats();
+        });
+        
+        /* Полноэкранный режим */
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        fullscreenBtn.addEventListener('click', function() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Ошибка: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        });
+
+        document.addEventListener('fullscreenchange', function() {
+            fullscreenBtn.textContent = document.fullscreenElement ? '🗗' : '⛶';
         });
     </script>
 </body>
