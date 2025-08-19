@@ -12,6 +12,26 @@
       height: 100vh;
       background-color: #0d1117;
       color: #c9d1d9;
+      position: relative; /* Для позиционирования кнопки */
+    }
+
+    /* Стили для кнопки полноэкранного режима */
+    .fullscreen-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: #58a6ff;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 100;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    .fullscreen-btn:hover {
+      opacity: 1;
     }
 
     .sidebar {
@@ -96,9 +116,29 @@
     .term-list li {
       margin-bottom: 8px;
     }
+
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+        height: auto;
+      }
+      
+      .sidebar, .details {
+        width: auto;
+        padding: 20px;
+      }
+      
+      .sidebar {
+        border-right: none;
+        border-bottom: 1px solid #30363d;
+      }
+    }
   </style>
 </head>
 <body>
+  <!-- Кнопка полноэкранного режима -->
+  <button id="fullscreen-btn" class="fullscreen-btn" title="Полноэкранный режим">⛶</button>
+
   <div class="sidebar">
     <h2>Основные компоненты</h2>
     <div class="term-item"><input type="checkbox" id="what-is-dc"> <span class="term-label" onclick="showDetails('what-is-dc')">ЦОД</span></div>
@@ -116,6 +156,26 @@
   </div>
 
   <script>
+    // Функционал полноэкранного режима
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+    
+    fullscreenBtn.addEventListener('click', function() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.log(`Ошибка при переходе в полный экран: ${err.message}`);
+        });
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    });
+
+    // Обновляем иконку при изменении состояния
+    document.addEventListener('fullscreenchange', function() {
+      fullscreenBtn.textContent = document.fullscreenElement ? '🗗' : '⛶';
+    });
+
     const termData = {
       'what-is-dc': {
         title: "ЦОД",
