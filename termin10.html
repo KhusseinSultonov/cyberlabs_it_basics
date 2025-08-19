@@ -12,6 +12,26 @@
       height: 100vh;
       background-color: #0d1117;
       color: #c9d1d9;
+      position: relative; /* Для позиционирования кнопки */
+    }
+
+    /* Стили для кнопки полноэкранного режима */
+    .fullscreen-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: #58a6ff;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 100;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    .fullscreen-btn:hover {
+      opacity: 1;
     }
 
     .sidebar {
@@ -96,9 +116,46 @@
     .term-list li {
       margin-bottom: 8px;
     }
+
+    /* Стили для таблицы сравнения */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    
+    th, td {
+      text-align: left;
+      padding: 8px 0;
+      border-bottom: 1px solid #30363d;
+    }
+    
+    th {
+      color: #f0f6fc;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+        height: auto;
+      }
+      
+      .sidebar, .details {
+        width: auto;
+        padding: 20px;
+      }
+      
+      .sidebar {
+        border-right: none;
+        border-bottom: 1px solid #30363d;
+      }
+    }
   </style>
 </head>
 <body>
+  <!-- Кнопка полноэкранного режима -->
+  <button id="fullscreen-btn" class="fullscreen-btn" title="Полноэкранный режим">⛶</button>
+
   <div class="sidebar">
     <h2>Гипервизоры и виртуальные машины</h2>
     <div class="term-item"><input type="checkbox" id="virtualization"> <span class="term-label" onclick="showDetails('virtualization')">Виртуализация</span></div>
@@ -115,6 +172,26 @@
   </div>
 
   <script>
+    // Функционал полноэкранного режима
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+    
+    fullscreenBtn.addEventListener('click', function() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.log(`Ошибка при переходе в полный экран: ${err.message}`);
+        });
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    });
+
+    // Обновляем иконку при изменении состояния
+    document.addEventListener('fullscreenchange', function() {
+      fullscreenBtn.textContent = document.fullscreenElement ? '🗗' : '⛶';
+    });
+
     const termData = {
       'virtualization': {
         title: "Виртуализация",
@@ -240,31 +317,31 @@
         title: "Контейнеры vs ВМ",
         description: "Сравнение виртуальных машин и контейнерных технологий.",
         details: `
-          <table style="width:100%; border-collapse: collapse; margin: 20px 0;">
-            <tr style="border-bottom: 1px solid #30363d;">
-              <th style="text-align: left; padding: 8px 0;">Характеристика</th>
-              <th style="text-align: left; padding: 8px 0;">Виртуальные машины</th>
-              <th style="text-align: left; padding: 8px 0;">Контейнеры</th>
+          <table>
+            <tr>
+              <th>Характеристика</th>
+              <th>Виртуальные машины</th>
+              <th>Контейнеры</th>
             </tr>
-            <tr style="border-bottom: 1px solid #30363d;">
-              <td style="padding: 8px 0;">Изоляция</td>
-              <td style="padding: 8px 0;">Полная (аппаратный уровень)</td>
-              <td style="padding: 8px 0;">На уровне процессов</td>
+            <tr>
+              <td>Изоляция</td>
+              <td>Полная (аппаратный уровень)</td>
+              <td>На уровне процессов</td>
             </tr>
-            <tr style="border-bottom: 1px solid #30363d;">
-              <td style="padding: 8px 0;">Ресурсы</td>
-              <td style="padding: 8px 0;">Выделенные виртуальные ресурсы</td>
-              <td style="padding: 8px 0;">Разделяют ядро ОС хоста</td>
+            <tr>
+              <td>Ресурсы</td>
+              <td>Выделенные виртуальные ресурсы</td>
+              <td>Разделяют ядро ОС хоста</td>
             </tr>
-            <tr style="border-bottom: 1px solid #30363d;">
-              <td style="padding: 8px 0;">Загрузка</td>
-              <td style="padding: 8px 0;">Медленнее (загрузка всей ОС)</td>
-              <td style="padding: 8px 0;">Быстрее (общее ядро)</td>
+            <tr>
+              <td>Загрузка</td>
+              <td>Медленнее (загрузка всей ОС)</td>
+              <td>Быстрее (общее ядро)</td>
             </tr>
-            <tr style="border-bottom: 1px solid #30363d;">
-              <td style="padding: 8px 0;">Использование</td>
-              <td style="padding: 8px 0;">Разные ОС на одном железе</td>
-              <td style="padding: 8px 0;">Одно ядро ОС, разные пользовательские пространства</td>
+            <tr>
+              <td>Использование</td>
+              <td>Разные ОС на одном железе</td>
+              <td>Одно ядро ОС, разные пользовательские пространства</td>
             </tr>
           </table>
           <p>Примеры контейнерных технологий: Docker, LXC, Kubernetes</p>
