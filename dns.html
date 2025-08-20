@@ -15,6 +15,7 @@
       font-family: Inter, system-ui, sans-serif;
       display: flex; flex-direction: column; align-items: center;
       min-height: 100vh;
+      position: relative; /* для кнопки полного экрана */
     }
     h1 { margin-top: 0; color: var(--text); }
     .container {
@@ -27,6 +28,7 @@
     }
     .input-group {
       display: flex; gap: 10px; flex: 1;
+      min-width: 300px;
     }
     input, button {
       padding: 10px 15px; border-radius: 8px;
@@ -40,6 +42,7 @@
       background: var(--accent); color: white;
       font-weight: bold; cursor: pointer;
       white-space: nowrap;
+      min-width: 120px;
     }
     button.secondary {
       background: rgba(255,255,255,0.1);
@@ -90,9 +93,56 @@
       font-size: 22px;
       padding: 20px;
     }
+    
+    /* Кнопка полноэкранного режима */
+    .fullscreen-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.5);
+      border: none;
+      color: #58a6ff;
+      font-size: 24px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 100;
+      opacity: 0.7;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .fullscreen-btn:hover { 
+      opacity: 1;
+      background: rgba(0, 0, 0, 0.7);
+    }
+    
+    @media (max-width: 600px) {
+      .controls {
+        flex-direction: column;
+      }
+      .input-group {
+        min-width: 100%;
+      }
+      button {
+        width: 100%;
+      }
+      .fullscreen-btn {
+        top: 10px;
+        right: 10px;
+        font-size: 20px;
+        width: 36px;
+        height: 36px;
+      }
+    }
   </style>
 </head>
 <body>
+  <!-- Кнопка полноэкранного режима -->
+  <button id="fullscreen-btn" class="fullscreen-btn" title="Полноэкранный режим">⛶</button>
+  
   <div class="container">
     <h1>DNS Визуализатор</h1>
     <p>Узнайте как доменные имена преобразуются в IP-адреса и обратно</p>
@@ -102,7 +152,12 @@
         <input id="input" type="text" placeholder="Введите домен или IP" value="example.com" />
         <button id="resolve">Преобразовать</button>
       </div>
-      <button id="fullscreen" class="secondary">Полный экран</button>
+      <button id="fullscreen" class="secondary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+        </svg>
+        Полный экран
+      </button>
     </div>
     
     <div class="visualization">
@@ -134,6 +189,7 @@
     const input = document.getElementById('input');
     const resolveBtn = document.getElementById('resolve');
     const fullscreenBtn = document.getElementById('fullscreen');
+    const fixedFullscreenBtn = document.getElementById('fullscreen-btn');
     const result = document.getElementById('result');
     const visualization = document.querySelector('.visualization');
     const container = document.querySelector('.container');
@@ -217,15 +273,28 @@
       if (e.key === 'Enter') resolve();
     });
     fullscreenBtn.addEventListener('click', toggleFullscreen);
+    fixedFullscreenBtn.addEventListener('click', toggleFullscreen);
     
     // Следим за изменениями полноэкранного режима
     document.addEventListener('fullscreenchange', () => {
       if (document.fullscreenElement) {
         document.body.classList.add('fullscreen');
-        fullscreenBtn.textContent = 'Обычный режим';
+        fullscreenBtn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+            <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path>
+          </svg>
+          Обычный режим
+        `;
+        fixedFullscreenBtn.textContent = '🗗';
       } else {
         document.body.classList.remove('fullscreen');
-        fullscreenBtn.textContent = 'Полный экран';
+        fullscreenBtn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+          </svg>
+          Полный экран
+        `;
+        fixedFullscreenBtn.textContent = '⛶';
       }
     });
   </script>
